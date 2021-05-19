@@ -13,7 +13,7 @@
 
 namespace JasonTheAdams\BBCustomAttributes;
 
-class BBCustomAttributes
+class BB_Custom_Attributes
 {
     /**
      * Connects to the needed hooks
@@ -23,6 +23,10 @@ class BBCustomAttributes
         add_action('plugins_loaded', [$this, 'registerForm']);
         add_filter('fl_builder_register_settings_form', [$this, 'filterAdvancedModule'], 10, 2);
         add_filter('fl_builder_module_attributes', [$this, 'filterAttributes'], 10, 2);
+        add_filter('fl_builder_column_attributes', [$this, 'filterAttributes'], 10, 2);
+        add_filter('fl_builder_row_attributes', [$this, 'filterAttributes'], 10, 2);
+
+
     }
 
     /**
@@ -83,6 +87,7 @@ class BBCustomAttributes
      */
     public function filterAdvancedModule($form, $id)
     {
+        // Modules location
         if ('module_advanced' === $id) {
             $form['sections']['css_selectors']['fields']['custom_attributes'] = [
                 'type'         => 'form',
@@ -92,7 +97,19 @@ class BBCustomAttributes
                 'multiple'     => true,
                 'preview_text' => 'key'
             ];
-        }
+        } 
+
+        // Row Location / Column Targetting
+        else if ('row' === $id  || 'col' === $id) {
+            $form['tabs']['advanced']['sections']['css_selectors']['fields']['custom_attributes'] = [
+                'type'         => 'form',
+                'form'         => 'custom_attributes',
+                'label'        => __('Attributes'),
+                'help'         => __('Adds custom attributes to the module'),
+                'multiple'     => true,
+                'preview_text' => 'key'
+            ];
+        } 
 
         return $form;
     }
@@ -120,4 +137,4 @@ class BBCustomAttributes
     }
 }
 
-(new BBCustomAttributes())->load();
+(new BB_Custom_Attributes())->load();
